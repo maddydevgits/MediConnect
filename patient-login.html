@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Login - MediConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        header {
+            background-color: #3b82f6;
+            color: white;
+            padding: 20px 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #1f2937;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            margin: 10px 0 0;
+        }
+
+        .wallet-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .wallet-status {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .wallet-status.connected {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .wallet-status.error {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .wallet-status i {
+            margin-right: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            width: 100%;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .metamask-alert {
+            background-color: #fff7ed;
+            border: 1px solid #fdba74;
+            color: #9a3412;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .metamask-alert i {
+            margin-right: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+        }
+
+        .register-link a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="js/web3.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo" onclick="window.location.href='/'">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>MediConnect</span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Patient Login</h1>
+                <p>Access your medical records securely using your wallet</p>
+            </div>
+
+            <div id="metamaskAlert" class="metamask-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                Please install MetaMask to use this application
+            </div>
+
+            <div id="walletStatus" class="wallet-status">
+                <i class="fas fa-check-circle"></i>
+                <span id="walletStatusText"></span>
+            </div>
+
+            <div class="wallet-section">
+                <button id="connectWalletBtn" class="btn btn-primary">
+                    <i class="fas fa-wallet"></i>
+                    Connect Wallet
+                </button>
+            </div>
+
+            <form id="loginForm" style="display: none;">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <div id="emailError" class="error"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+            </form>
+
+            <div class="register-link">
+                New patient? <a href="patient-registration.html">Register here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAccount = null;
+
+        // Check if MetaMask is installed
+        function checkMetaMask() {
+            if (typeof window.ethereum === 'undefined') {
+                document.getElementById('metamaskAlert').style.display = 'block';
+                document.getElementById('connectWalletBtn').style.display = 'none';
+                return false;
+            }
+            return true;
+        }
+
+        // Initialize Web3
+        async function initWeb3() {
+            if (!checkMetaMask()) return;
+
+            try {
+                // Show loading state
+                const connectBtn = document.getElementById('connectWalletBtn');
+                connectBtn.disabled = true;
+                connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+
+                // Request account access
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('No accounts found. Please unlock MetaMask.');
+                }
+                currentAccount = accounts[0];
+                
+                // Initialize Web3
+                console.log('Initializing Web3...');
+                const web3Initialized = await window.web3Functions.initWeb3();
+                if (!web3Initialized) {
+                    throw new Error('Failed to initialize Web3. Please check your network connection.');
+                }
+
+                // Check contract status
+                console.log('Checking contract status...');
+                const contractStatus = await window.web3Functions.checkContractStatus();
+                if (!contractStatus.initialized) {
+                    throw new Error('Smart contract not initialized. Please contact support.');
+                }
+
+                // Check if the account is registered as a patient
+                console.log('Checking patient status...');
+                const isPatient = await window.web3Functions.isPatient(currentAccount);
+                if (!isPatient) {
+                    throw new Error('This wallet is not registered as a patient. Please register first.');
+                }
+
+                // Get patient info
+                console.log('Retrieving patient info...');
+                const patientInfo = await window.web3Functions.getPatientInfo(currentAccount);
+                if (!patientInfo || !patientInfo[0]) {
+                    throw new Error('Failed to retrieve patient information. Please try again.');
+                }
+
+                // Store patient info and wallet address
+                const patientData = {
+                    name: patientInfo[0],
+                    email: patientInfo[1],
+                    phone: patientInfo[2],
+                    dob: patientInfo[3],
+                    medicalHistory: patientInfo[4]
+                };
+                sessionStorage.setItem('patientInfo', JSON.stringify(patientData));
+                sessionStorage.setItem('walletAddress', currentAccount);
+
+                // Show success status
+                const walletStatus = document.getElementById('walletStatus');
+                walletStatus.className = 'wallet-status connected';
+                walletStatus.style.display = 'block';
+                walletStatus.innerHTML = '<i class="fas fa-check-circle"></i> Wallet Connected: ' + 
+                    currentAccount.substring(0, 6) + '...' + currentAccount.substring(38);
+
+                // Show login form
+                document.getElementById('loginForm').style.display = 'block';
+                connectBtn.style.display = 'none';
+
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                const walletStatus = document.getElementById('walletStatus');
+                walletStatus.className = 'wallet-status error';
+                walletStatus.style.display = 'block';
+                walletStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + error.message;
+
+                // Reset connect button
+                const connectBtn = document.getElementById('connectWalletBtn');
+                connectBtn.disabled = false;
+                connectBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+            }
+        }
+
+        // Handle login form submission
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const emailError = document.getElementById('emailError');
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            
+            // Reset error state
+            emailError.style.display = 'none';
+            
+            // Validate email
+            if (!email) {
+                emailError.textContent = 'Please enter your email';
+                emailError.style.display = 'block';
+                return;
+            }
+
+            // Get stored patient info
+            const patientInfo = JSON.parse(sessionStorage.getItem('patientInfo'));
+            if (!patientInfo) {
+                emailError.textContent = 'Please connect your wallet first';
+                emailError.style.display = 'block';
+                return;
+            }
+
+            try {
+                // Disable submit button and show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+                // Verify email matches
+                if (email.toLowerCase() !== patientInfo.email.toLowerCase()) {
+                    throw new Error('Email does not match registered patient');
+                }
+
+                // Verify patient status again before redirecting
+                const isPatient = await window.web3Functions.isPatient(currentAccount);
+                if (!isPatient) {
+                    throw new Error('Patient registration not found. Please reconnect your wallet.');
+                }
+
+                // Redirect to dashboard
+                window.location.href = 'patient-dashboard.html';
+
+            } catch (error) {
+                console.error('Login error:', error);
+                emailError.textContent = error.message || 'Error verifying patient status';
+                emailError.style.display = 'block';
+                
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in
+            const patientInfo = sessionStorage.getItem('patientInfo');
+            const walletAddress = sessionStorage.getItem('walletAddress');
+            
+            if (patientInfo && walletAddress) {
+                // Verify the stored wallet is still connected
+                if (window.ethereum) {
+                    window.ethereum.request({ method: 'eth_accounts' })
+                        .then(accounts => {
+                            if (accounts.length > 0 && accounts[0].toLowerCase() === walletAddress.toLowerCase()) {
+                                window.location.href = 'patient-dashboard.html';
+                            } else {
+                                // Clear invalid session
+                                sessionStorage.removeItem('patientInfo');
+                                sessionStorage.removeItem('walletAddress');
+                            }
+                        })
+                        .catch(() => {
+                            // Clear invalid session
+                            sessionStorage.removeItem('patientInfo');
+                            sessionStorage.removeItem('walletAddress');
+                        });
+                } else {
+                    // Clear invalid session
+                    sessionStorage.removeItem('patientInfo');
+                    sessionStorage.removeItem('walletAddress');
+                }
+            }
+
+            // Add event listeners
+            document.getElementById('connectWalletBtn').addEventListener('click', initWeb3);
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Check MetaMask on load
+            checkMetaMask();
+
+            // Listen for account changes
+            if (window.ethereum) {
+                window.ethereum.on('accountsChanged', function (accounts) {
+                    if (accounts.length === 0) {
+                        // User disconnected their wallet
+                        sessionStorage.removeItem('patientInfo');
+                        sessionStorage.removeItem('walletAddress');
+                        window.location.reload();
+                    } else if (accounts[0].toLowerCase() !== currentAccount?.toLowerCase()) {
+                        // User switched accounts
+                        sessionStorage.removeItem('patientInfo');
+                        sessionStorage.removeItem('walletAddress');
+                        window.location.reload();
+                    }
+                });
+
+                // Listen for chain changes
+                window.ethereum.on('chainChanged', function() {
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

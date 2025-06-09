@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - MediConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: #3b82f6;
+            color: white;
+            padding: 20px 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            transition: opacity 0.2s;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.8;
+        }
+
+        .dashboard-content {
+            padding: 40px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 992px) {
+            .grid {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #3b82f6;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        /* Patient Information */
+        .profile-center {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 32px;
+        }
+
+        .patient-name {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .info-list {
+            margin-top: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .info-icon {
+            width: 24px;
+            margin-right: 10px;
+            color: #3b82f6;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            color: #1f2937;
+        }
+
+        /* Medical Reports */
+        .report-item {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+        }
+
+        .report-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .report-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .report-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+
+        .report-date {
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .report-type {
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 4px 8px;
+            border-radius: 9999px;
+        }
+
+        .report-content {
+            background-color: #f3f4f6;
+            padding: 12px;
+            border-radius: 6px;
+            color: #4b5563;
+            margin-top: 10px;
+        }
+
+        .report-doctor {
+            font-size: 14px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .no-reports {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .no-reports-icon {
+            font-size: 48px;
+            color: #d1d5db;
+            margin-bottom: 15px;
+        }
+
+        .no-reports-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 5px;
+        }
+
+        .no-reports-text {
+            color: #6b7280;
+        }
+
+        .wallet-status {
+            background-color: #f3f4f6;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wallet-status i {
+            color: #3b82f6;
+        }
+
+        .wallet-address {
+            font-family: monospace;
+            background-color: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="js/web3.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo" onclick="window.location.href='/'">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>MediConnect</span>
+                </div>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <i class="fas fa-user"></i>
+                        <span id="patientName">Loading...</span>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container dashboard-content">
+        <div class="grid">
+            <!-- Patient Information -->
+            <div>
+                <div class="card">
+                    <div class="card-header">Patient Information</div>
+                    <div class="card-content">
+                        <div class="wallet-status">
+                            <i class="fas fa-wallet"></i>
+                            Connected Wallet: <span id="walletAddress" class="wallet-address">Loading...</span>
+                        </div>
+
+                        <div class="profile-center">
+                            <div class="avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+
+                        <h3 class="patient-name" id="fullNameDisplay"></h3>
+
+                        <div class="info-list">
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Date of Birth</div>
+                                    <div class="info-value" id="dobDisplay"></div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Place</div>
+                                    <div class="info-value" id="placeDisplay"></div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Email</div>
+                                    <div class="info-value" id="emailDisplay"></div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Phone</div>
+                                    <div class="info-value" id="phoneDisplay"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Reports -->
+            <div>
+                <div class="card">
+                    <div class="card-header">Medical Reports</div>
+                    <div id="reportsContainer" class="card-content">
+                        <!-- Reports will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            const patientInfo = sessionStorage.getItem('patientInfo');
+            const walletAddress = sessionStorage.getItem('walletAddress');
+            
+            if (!patientInfo || !walletAddress) {
+                window.location.href = 'patient-login.html';
+                return;
+            }
+
+            try {
+                // Initialize Web3
+                const web3Initialized = await window.web3Functions.initWeb3();
+                if (!web3Initialized) {
+                    throw new Error('Failed to initialize Web3');
+                }
+
+                // Check contract status
+                const contractStatus = await window.web3Functions.checkContractStatus();
+                if (!contractStatus.initialized) {
+                    throw new Error('Smart contract not initialized');
+                }
+
+                // Verify patient status on blockchain
+                const isPatient = await window.web3Functions.isPatient(walletAddress);
+                if (!isPatient) {
+                    throw new Error('Patient registration not found on blockchain');
+                }
+
+                // Get latest patient info from blockchain
+                const blockchainInfo = await window.web3Functions.getPatientInfo(walletAddress);
+                if (!blockchainInfo) {
+                    throw new Error('Failed to retrieve patient information');
+                }
+
+                // Update stored patient info
+                const updatedInfo = {
+                    name: blockchainInfo[0],
+                    email: blockchainInfo[1],
+                    phone: blockchainInfo[2],
+                    dob: blockchainInfo[3],
+                    medicalHistory: blockchainInfo[4]
+                };
+                sessionStorage.setItem('patientInfo', JSON.stringify(updatedInfo));
+
+                // Update UI
+                displayPatientInfo(updatedInfo);
+                displayMedicalReports(updatedInfo.medicalHistory);
+
+                // Handle logout
+                document.getElementById('logoutBtn').addEventListener('click', function() {
+                    sessionStorage.removeItem('patientInfo');
+                    sessionStorage.removeItem('walletAddress');
+                    window.location.href = 'patient-login.html';
+                });
+
+                // Listen for account changes
+                if (window.ethereum) {
+                    window.ethereum.on('accountsChanged', function (accounts) {
+                        if (accounts.length === 0 || accounts[0].toLowerCase() !== walletAddress.toLowerCase()) {
+                            sessionStorage.removeItem('patientInfo');
+                            sessionStorage.removeItem('walletAddress');
+                            window.location.href = 'patient-login.html';
+                        }
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error loading patient dashboard: ' + error.message);
+                window.location.href = 'patient-login.html';
+            }
+        });
+
+        // Display patient information
+        function displayPatientInfo(patient) {
+            const walletAddress = sessionStorage.getItem('walletAddress');
+            if (!walletAddress) {
+                console.error('Wallet address not found in session storage');
+                return;
+            }
+
+            document.getElementById('patientName').textContent = patient.name;
+            document.getElementById('fullNameDisplay').textContent = patient.name;
+            document.getElementById('walletAddress').textContent = 
+                walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
+            document.getElementById('dobDisplay').textContent = patient.dob;
+            document.getElementById('emailDisplay').textContent = patient.email;
+            document.getElementById('phoneDisplay').textContent = patient.phone;
+
+            // Extract and display place from medical history
+            let place = '';
+            try {
+                const parsedHistory = JSON.parse(patient.medicalHistory || '[]');
+                if (typeof parsedHistory === 'string') {
+                    const parts = parsedHistory.split('\n');
+                    if (parts.length > 1) {
+                        place = parts[parts.length - 1].trim();
+                    }
+                }
+            } catch (e) {
+                const parts = (patient.medicalHistory || '').split('\n');
+                if (parts.length > 1) {
+                    place = parts[parts.length - 1].trim();
+                }
+            }
+            document.getElementById('placeDisplay').textContent = place || 'Not provided';
+        }
+
+        // Display medical reports
+        function displayMedicalReports(medicalHistory) {
+            const container = document.getElementById('reportsContainer');
+            
+            try {
+                // Parse medical history
+                let reports = [];
+                try {
+                    const parsedHistory = JSON.parse(medicalHistory || '[]');
+                    if (Array.isArray(parsedHistory)) {
+                        reports = parsedHistory.filter(report => 
+                            report.title !== 'Initial Medical History' &&
+                            report.title !== 'Medical History' &&
+                            report.notes && 
+                            report.notes.trim() !== '' && 
+                            !report.notes.includes('Hyderabad')
+                        );
+                    }
+                } catch (e) {
+                    console.error('Error parsing medical history:', e);
+                }
+
+                if (!reports || reports.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-reports">
+                            <div class="no-reports-icon">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            <h3 class="no-reports-title">No Medical Reports</h3>
+                            <p class="no-reports-text">You don't have any medical reports yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort reports by date (newest first)
+                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Build reports list
+                let reportsHtml = '';
+                reports.forEach(report => {
+                    const doctorInfo = report.doctorAddress ? 
+                        `<div class="report-doctor">
+                            <i class="fas fa-user-md"></i> 
+                            Doctor: ${report.doctorAddress === 'Unknown' ? 'Unknown' : 
+                                report.doctorAddress.substring(0, 6) + '...' + report.doctorAddress.substring(38)}
+                        </div>` : '';
+
+                    reportsHtml += `
+                        <div class="report-item">
+                            <div class="report-header">
+                                <div class="report-title">${report.title}</div>
+                            </div>
+                            
+                            <div class="report-meta">
+                                <div class="report-date">
+                                    <i class="fas fa-calendar-day"></i> ${report.date}
+                                </div>
+                                <div class="report-type">${report.type}</div>
+                                ${doctorInfo}
+                            </div>
+                            
+                            <div class="report-content">${report.notes}</div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = reportsHtml;
+
+            } catch (error) {
+                console.error('Error displaying reports:', error);
+                container.innerHTML = `
+                    <div class="no-reports">
+                        <div class="no-reports-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="no-reports-title">Error Loading Reports</h3>
+                        <p class="no-reports-text">There was an error loading your medical reports. Please try refreshing the page.</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

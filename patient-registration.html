@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+        
+      <meta charset="UTF-8" />
+        
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+      <title>Patient Registration - MediConnect</title>
+        
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        
+      <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+        
+      <script src="js/web3.js"></script>
+        
+      <style>
+             body {
+               font-family: Arial, sans-serif;
+               margin: 0;
+               padding: 0;
+               background-color: #f5f7fa;
+             }
+             
+             .container {
+               max-width: 1200px;
+               margin: 0 auto;
+               padding: 0 20px;
+             }
+             
+             header {
+               background-color: #3b82f6;
+               color: white;
+               padding: 20px 0;
+             }
+             
+             nav {
+               display: flex;
+               justify-content: space-between;
+               align-items: center;
+             }
+             
+             .logo {
+               display: flex;
+               align-items: center;
+               font-size: 24px;
+               font-weight: bold;
+               cursor: pointer;
+             }
+             
+             .logo i {
+               margin-right: 10px;
+             }
+             
+             .nav-links {
+               display: flex;
+               gap: 20px;
+             }
+             
+             .nav-links a {
+               color: white;
+               text-decoration: none;
+             }
+             
+             .nav-links a:hover {
+               text-decoration: underline;
+             }
+             
+             .form-container {
+               max-width: 800px;
+               margin: 40px auto;
+               background-color: white;
+               border-radius: 10px;
+               box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+               overflow: hidden;
+             }
+             
+             .form-header {
+               background-color: #3b82f6;
+               color: white;
+               padding: 20px;
+             }
+             
+             .form-header h2 {
+               margin: 0;
+               font-size: 24px;
+             }
+             
+             .form-content {
+               padding: 30px;
+             }
+             
+             .form-group {
+               margin-bottom: 20px;
+             }
+             
+             label {
+               display: block;
+               margin-bottom: 8px;
+               font-weight: 500;
+               color: #374151;
+             }
+             
+             input, select, textarea {
+               width: 100%;
+               padding: 10px;
+               border: 1px solid #d1d5db;
+               border-radius: 6px;
+               font-size: 16px;
+               transition: border-color 0.2s;
+             }
+             
+             input:focus, select:focus, textarea:focus {
+               outline: none;
+               border-color: #3b82f6;
+               box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+             }
+             
+             .form-grid {
+               display: grid;
+               grid-template-columns: 1fr;
+               gap: 20px;
+             }
+             
+             @media (min-width: 768px) {
+               .form-grid {
+                 grid-template-columns: 1fr 1fr;
+               }
+             }
+             
+             .error {
+               color: #ef4444;
+               font-size: 14px;
+               margin-top: 5px;
+             }
+             
+             .form-footer {
+               padding: 20px 30px;
+               border-top: 1px solid #e5e7eb;
+               display: flex;
+               justify-content: space-between;
+               align-items: center;
+             }
+             
+             .required-note {
+               color: #6b7280;
+               font-size: 14px;
+             }
+             
+             .btn {
+               padding: 12px 24px;
+               border-radius: 6px;
+               font-weight: bold;
+               border: none;
+               cursor: pointer;
+               font-size: 16px;
+               transition: all 0.2s;
+             }
+             
+             .btn-primary {
+               background-color: #3b82f6;
+               color: white;
+             }
+             
+             .btn-primary:hover {
+               background-color: #2563eb;
+             }
+             
+             .success-container {
+               padding: 30px;
+             }
+             
+             .success-message {
+               background-color: #ecfdf5;
+               border: 1px solid #10b981;
+               padding: 20px;
+               border-radius: 6px;
+               margin-bottom: 30px;
+             }
+             
+             .success-message h3 {
+               color: #047857;
+               display: flex;
+               align-items: center;
+               margin-top: 0;
+             }
+             
+             .success-message h3 i {
+               margin-right: 10px;
+             }
+             
+             .credentials-box {
+               background-color: #f3f4f6;
+               padding: 20px;
+               border-radius: 6px;
+               margin-bottom: 20px;
+             }
+             
+             .credentials-box h3 {
+               color: #3b82f6;
+               margin-top: 0;
+             }
+             
+             .credential-item {
+               background-color: white;
+               padding: 15px;
+               border-radius: 6px;
+               margin-bottom: 15px;
+               border: 1px solid #e5e7eb;
+             }
+             
+             .credential-label {
+               font-size: 14px;
+               color: #6b7280;
+               margin-bottom: 5px;
+             }
+             
+             .credential-value {
+               font-family: monospace;
+               font-size: 18px;
+               background-color: #f9fafb;
+               padding: 10px;
+               border-radius: 4px;
+             }
+             
+             .metamask-alert {
+               display: none;
+               background-color: #fee2e2;
+               border: 1px solid #ef4444;
+               color: #b91c1c;
+               padding: 12px;
+               border-radius: 6px;
+               margin-bottom: 20px;
+             }
+           
+      </style>
+   </head>
+   <body>
+        
+      <header>
+             
+         <div class="container">
+                  
+            <nav>
+                       
+               <div class="logo" onclick="window.location.href='/'">
+                            <i class="fas fa-heartbeat"></i>
+                            <span>MediConnect</span>
+                          
+               </div>
+                       
+               <div class="nav-links">
+                            <a href="/">Home</a>
+                            <a href="/doctor-login.html">Doctor Login</a>
+                          
+               </div>
+                     
+            </nav>
+                
+         </div>
+           
+      </header>
+        
+      <div class="container">
+             
+         <div class="metamask-alert" id="metamaskAlert">
+            Please install MetaMask to use this application.
+         </div>
+             
+         <div class="form-container" id="registrationForm">
+                  
+            <div class="form-header">
+                       
+               <h2>Patient Registration</h2>
+                     
+            </div>
+                  
+            <form id="patientForm" onsubmit="handleSubmit(event)">
+                       
+               <div class="form-content">
+                            
+                  <div class="form-grid">
+                                 
+                     <div class="form-group">
+                                      <label for="fullName">Full Name *</label>
+                                      <input 
+                                        type="text" 
+                                        id="fullName" 
+                                        name="fullName" 
+                                        required
+                                        minlength="3"
+                                        placeholder="Enter your full name"
+                                      >
+                                      
+                        <div class="error" id="fullNameError"></div>
+                                    
+                     </div>
+                                 
+                                 
+                     <div class="form-group">
+                                      <label for="dob">Date of Birth *</label>
+                                      <input 
+                                        type="date" 
+                                        id="dob" 
+                                        name="dob" 
+                                        required
+                                      >
+                                      
+                        <div class="error" id="dobError"></div>
+                                    
+                     </div>
+                                 
+                                 
+                     <div class="form-group">
+                                      <label for="gender">Gender *</label>
+                                      
+                        <select id="gender" name="gender" required>
+                                           
+                           <option value="male">Male</option>
+                                           
+                           <option value="female">Female</option>
+                                           
+                           <option value="other">Other</option>
+                                         
+                        </select>
+                                      
+                        <div class="error" id="genderError"></div>
+                                    
+                     </div>
+                                 
+                                 
+                     <div class="form-group">
+                                      <label for="email">Email Address *</label>
+                                      <input 
+                                        type="email" 
+                                        id="email" 
+                                        name="email" 
+                                        required
+                                        placeholder="Enter your email address"
+                                      >
+                                      
+                        <div class="error" id="emailError"></div>
+                                    
+                     </div>
+                                 
+                                 
+                     <div class="form-group">
+                                      <label for="phone">Phone Number *</label>
+                                      <input 
+                                        type="tel" 
+                                        id="phone" 
+                                        name="phone" 
+                                        required
+                                        minlength="10"
+                                        placeholder="Enter your phone number"
+                                      >
+                                      
+                        <div class="error" id="phoneError"></div>
+                                    
+                     </div>
+                                 
+                                 
+                     <div class="form-group">
+                                      <label for="emergencyContact">Emergency Contact *</label>
+                                      <input 
+                                        type="tel" 
+                                        id="emergencyContact" 
+                                        name="emergencyContact" 
+                                        required
+                                        minlength="10"
+                                        placeholder="Enter emergency contact number"
+                                      >
+                                      
+                        <div class="error" id="emergencyContactError"></div>
+                                    
+                     </div>
+                               
+                  </div>
+                            
+                            
+                  <div class="form-group">
+                                 <label for="address">Address *</label>
+                                 <textarea 
+                                   id="address" 
+                                   name="address" 
+                                   rows="3" 
+                                   required
+                                   minlength="5"
+                                   placeholder="Enter your full address"
+                                 ></textarea>
+                                 
+                     <div class="error" id="addressError"></div>
+                               
+                  </div>
+                          
+               </div>
+                       
+                       
+               <div class="form-footer">
+                            <span class="required-note">* Required fields</span>
+                            <button type="submit" class="btn btn-primary">Register with Blockchain</button>
+                          
+               </div>
+                     
+            </form>
+                
+         </div>
+             
+             
+         <div class="form-container" id="successView" style="display: none;">
+                  
+            <div class="form-header">
+                       
+               <h2>Registration Successful</h2>
+                     
+            </div>
+                  
+                  
+            <div class="success-container">
+                       
+               <div class="success-message">
+                            
+                  <h3><i class="fas fa-check-circle"></i> Registration Successful!</h3>
+                            
+                  <p>Your patient account has been created successfully.</p>
+                          
+               </div>
+                       
+                       
+               <div class="credentials-box">
+                            
+                  <h3>Your Credentials</h3>
+                            
+                  <p>Please save this information for future logins:</p>
+                            
+                            
+                  <div class="credential-item">
+                                 
+                     <div class="credential-label">Patient ID</div>
+                                 
+                     <div class="credential-value" id="patientIdDisplay"></div>
+                               
+                  </div>
+                            
+                            
+                  <div class="credential-item">
+                                 
+                     <div class="credential-label">Temporary Password</div>
+                                 
+                     <div class="credential-value" id="passwordDisplay"></div>
+                               
+                  </div>
+                            
+                            
+                  <p><i class="fas fa-info-circle"></i> You will need these credentials to access your medical records.</p>
+                          
+               </div>
+                       
+                       
+               <div style="text-align: right;">
+                            <button onclick="window.location.href='/'" class="btn btn-primary">Return to Home</button>
+                          
+               </div>
+                     
+            </div>
+                
+         </div>
+           
+      </div>
+        
+        <script>
+             // Generate a random patient ID
+             function generatePatientId() {
+               return 'MC-' + Math.floor(10000 + Math.random() * 90000).toString();
+             }
+             
+             // Generate a temporary password
+             function generateTempPassword() {
+               return Math.random().toString(36).slice(-8);
+             }
+             
+             // Save patient data to localStorage
+             function savePatient(patient) {
+               try {
+                 const patients = localStorage.getItem('patients') ? 
+                   JSON.parse(localStorage.getItem('patients')) : [];
+                 
+                 patients.push(patient);
+                 localStorage.setItem('patients', JSON.stringify(patients));
+                 return true;
+               } catch (error) {
+                 console.error('Error saving patient:', error);
+                 return false;
+               }
+             }
+             
+             // Form submission handler
+             function handleSubmit(event) {
+               event.preventDefault();
+               
+               // Get form values
+               const form = document.getElementById('patientForm');
+               const fullName = form.fullName.value;
+               const dob = form.dob.value;
+               const gender = form.gender.value;
+               const email = form.email.value;
+               const phone = form.phone.value;
+               const address = form.address.value;
+               const emergencyContact = form.emergencyContact.value;
+               
+               // Generate ID and password
+               const patientId = generatePatientId();
+               const password = generateTempPassword();
+               
+               // Create patient object
+               const patient = {
+                 id: patientId,
+                 password: password,
+                 fullName: fullName,
+                 dob: dob,
+                 gender: gender,
+                 email: email,
+                 phone: phone,
+                 address: address,
+                 emergencyContact: emergencyContact,
+                 reports: []
+               };
+               
+               // Save to localStorage
+               savePatient(patient);
+               
+               // Show success view
+               document.getElementById('registrationForm').style.display = 'none';
+               document.getElementById('successView').style.display = 'block';
+               
+               // Display credentials
+               document.getElementById('patientIdDisplay').textContent = patientId;
+               document.getElementById('passwordDisplay').textContent = password;
+             }
+
+             document.addEventListener('DOMContentLoaded', async function() {
+               // Initialize Web3
+               const web3Initialized = await window.web3Functions.initWeb3();
+               if (!web3Initialized) {
+                   document.getElementById('metamaskAlert').style.display = 'block';
+                   return;
+               }
+
+               // Handle form submission
+               document.getElementById('patientForm').addEventListener('submit', async function(e) {
+                   e.preventDefault();
+                   
+                   const name = document.getElementById('fullName').value;
+                   const email = document.getElementById('email').value;
+                   const phone = document.getElementById('phone').value;
+                   const dob = document.getElementById('dob').value;
+                   const medicalHistory = document.getElementById('address').value;
+
+                   try {
+                       const success = await window.web3Functions.registerPatient(
+                           name,
+                           email,
+                           phone,
+                           dob,
+                           medicalHistory
+                       );
+
+                       if (success) {
+                           alert('Registration successful! Your information has been stored on the blockchain.');
+                           window.location.href = 'index.html';
+                       } else {
+                           alert('Registration failed. Please try again.');
+                       }
+                   } catch (error) {
+                       console.error('Error:', error);
+                       alert('An error occurred during registration. Please try again.');
+                   }
+               });
+             });
+           
+      </script>
+   </body>
+</html>

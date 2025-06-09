@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+        
+      <meta charset="UTF-8" />
+        
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+      <title>Doctor Login - MediConnect</title>
+        
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        
+      <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+        
+      <script src="js/web3.js"></script>
+        
+      <style>
+             body {
+               font-family: Arial, sans-serif;
+               margin: 0;
+               padding: 0;
+               background-color: #f5f7fa;
+             }
+             
+             .container {
+               max-width: 1200px;
+               margin: 0 auto;
+               padding: 0 20px;
+             }
+             
+             header {
+               background-color: #3b82f6;
+               color: white;
+               padding: 20px 0;
+             }
+             
+             nav {
+               display: flex;
+               justify-content: space-between;
+               align-items: center;
+             }
+             
+             .logo {
+               display: flex;
+               align-items: center;
+               font-size: 24px;
+               font-weight: bold;
+               cursor: pointer;
+             }
+             
+             .logo i {
+               margin-right: 10px;
+             }
+             
+             .nav-links {
+               display: flex;
+               gap: 20px;
+             }
+             
+             .nav-links a {
+               color: white;
+               text-decoration: none;
+             }
+             
+             .nav-links a:hover {
+               text-decoration: underline;
+             }
+             
+             .login-container {
+               max-width: 500px;
+               margin: 60px auto;
+               background-color: white;
+               border-radius: 10px;
+               box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+               overflow: hidden;
+             }
+             
+             .login-header {
+               background-color: #3b82f6;
+               color: white;
+               padding: 30px;
+               text-align: center;
+             }
+             
+             .icon-circle {
+               width: 70px;
+               height: 70px;
+               background-color: rgba(255, 255, 255, 0.2);
+               border-radius: 50%;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               margin: 0 auto 20px;
+             }
+             
+             .icon-circle i {
+               font-size: 32px;
+             }
+             
+             .login-header h2 {
+               margin: 0;
+               font-size: 24px;
+             }
+             
+             .login-header p {
+               margin: 5px 0 0;
+               opacity: 0.8;
+             }
+             
+             .login-form {
+               padding: 30px;
+             }
+             
+             .error-message {
+               background-color: #fee2e2;
+               border: 1px solid #ef4444;
+               color: #b91c1c;
+               padding: 12px;
+               border-radius: 6px;
+               margin-bottom: 20px;
+               display: flex;
+               align-items: flex-start;
+             }
+             
+             .error-message i {
+               margin-right: 10px;
+               margin-top: 2px;
+             }
+             
+             .form-group {
+               margin-bottom: 20px;
+             }
+             
+             label {
+               display: block;
+               margin-bottom: 8px;
+               font-weight: 500;
+               color: #374151;
+             }
+             
+             input {
+               width: 100%;
+               padding: 12px;
+               border: 1px solid #d1d5db;
+               border-radius: 6px;
+               font-size: 16px;
+               transition: border-color 0.2s;
+             }
+             
+             input:focus {
+               outline: none;
+               border-color: #3b82f6;
+               box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+             }
+             
+             .btn {
+               width: 100%;
+               padding: 14px;
+               border-radius: 6px;
+               font-weight: bold;
+               border: none;
+               cursor: pointer;
+               font-size: 16px;
+               transition: all 0.2s;
+             }
+             
+             .btn-primary {
+               background-color: #3b82f6;
+               color: white;
+             }
+             
+             .btn-primary:hover {
+               background-color: #2563eb;
+             }
+             
+             .demo-link {
+               text-align: center;
+               margin-top: 20px;
+             }
+             
+             .demo-link button {
+               background: none;
+               border: none;
+               color: #3b82f6;
+               cursor: pointer;
+               font-size: 14px;
+             }
+             
+             .demo-link button:hover {
+               text-decoration: underline;
+             }
+             
+             .demo-info {
+               margin-top: 20px;
+               padding-top: 20px;
+               border-top: 1px solid #e5e7eb;
+               text-align: center;
+               font-size: 14px;
+               color: #6b7280;
+             }
+             
+             .demo-info p {
+               margin: 5px 0;
+             }
+             
+             .demo-info strong {
+               color: #374151;
+             }
+             
+             .metamask-alert {
+               display: none;
+               background-color: #fee2e2;
+               border: 1px solid #ef4444;
+               color: #b91c1c;
+               padding: 12px;
+               border-radius: 6px;
+               margin-bottom: 20px;
+             }
+           
+      </style>
+   </head>
+   <body>
+        
+      <header>
+             
+         <div class="container">
+                  
+            <nav>
+                       
+               <div class="logo" onclick="window.location.href='/'">
+                            <i class="fas fa-heartbeat"></i>
+                            <span>MediConnect</span>
+                          
+               </div>
+                       
+               <div class="nav-links">
+                            <a href="/">Home</a>
+                            <a href="/doctor-login.html">Doctor Login</a>
+                            <a href="/doctor-registration.html">Doctor Registration</a>
+                          
+               </div>
+                     
+            </nav>
+                
+         </div>
+           
+      </header>
+        
+      <div class="container">
+             
+         <div class="metamask-alert" id="metamaskAlert">
+            Please install MetaMask to use this application.
+         </div>
+         
+         <div class="login-container">
+                  
+            <div class="login-header">
+                       
+               <div class="icon-circle">
+                            <i class="fas fa-user-md"></i>
+                          
+               </div>
+                       
+               <h2>Doctor Login</h2>
+                       
+               <p>Access your medical dashboard</p>
+                     
+            </div>
+                  
+                  
+            <form id="loginForm" class="login-form">
+               <div class="form-group">
+                  <label>Connected Wallet</label>
+                  <div id="walletInfo" style="
+                     background-color: #f3f4f6;
+                     padding: 12px;
+                     border-radius: 6px;
+                     font-family: monospace;
+                     word-break: break-all;
+                     margin-bottom: 20px;
+                     display: none;
+                  "></div>
+                  <div id="connectWalletBtn" style="display: none;">
+                     <button type="button" class="btn btn-primary" style="width: 100%;">
+                        <i class="fab fa-ethereum"></i> Connect MetaMask
+                     </button>
+                  </div>
+               </div>
+               
+               <button type="submit" class="btn btn-primary" id="loginBtn" style="display: none;">
+                  Login as Doctor
+               </button>
+            </form>
+                
+         </div>
+           
+      </div>
+        
+        <script>
+             document.addEventListener('DOMContentLoaded', async function() {
+               const walletInfo = document.getElementById('walletInfo');
+               const connectWalletBtn = document.getElementById('connectWalletBtn');
+               const loginBtn = document.getElementById('loginBtn');
+               let currentAccount = null;
+
+               // Initialize Web3
+               const web3Initialized = await window.web3Functions.initWeb3();
+               if (!web3Initialized) {
+                  document.getElementById('metamaskAlert').style.display = 'block';
+                  connectWalletBtn.style.display = 'block';
+                  return;
+               }
+
+               // Get initial account
+               const accounts = await web3.eth.getAccounts();
+               if (accounts.length > 0) {
+                  currentAccount = accounts[0];
+                  updateWalletInfo(currentAccount);
+               } else {
+                  connectWalletBtn.style.display = 'block';
+               }
+
+               // Listen for account changes
+               if (window.ethereum) {
+                  window.ethereum.on('accountsChanged', function (accounts) {
+                     if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        updateWalletInfo(currentAccount);
+                     } else {
+                        currentAccount = null;
+                        walletInfo.style.display = 'none';
+                        loginBtn.style.display = 'none';
+                        connectWalletBtn.style.display = 'block';
+                     }
+                  });
+               }
+
+               // Connect wallet button handler
+               connectWalletBtn.addEventListener('click', async function() {
+                  try {
+                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                     currentAccount = accounts[0];
+                     updateWalletInfo(currentAccount);
+                  } catch (error) {
+                     console.error('Error connecting wallet:', error);
+                     alert('Failed to connect wallet. Please try again.');
+                  }
+               });
+
+               function updateWalletInfo(address) {
+                  walletInfo.textContent = address;
+                  walletInfo.style.display = 'block';
+                  connectWalletBtn.style.display = 'none';
+                  loginBtn.style.display = 'block';
+               }
+
+               // Handle form submission
+               document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                  e.preventDefault();
+                  
+                  if (!currentAccount) {
+                     alert('Please connect your wallet first');
+                     return;
+                  }
+
+                  try {
+                     const doctorInfo = await window.web3Functions.getDoctorInfo(currentAccount);
+                     
+                     if (doctorInfo) {
+                        // Store doctor info in session storage
+                        sessionStorage.setItem('doctorInfo', JSON.stringify(doctorInfo));
+                        sessionStorage.setItem('walletAddress', currentAccount);
+                        
+                        // Redirect to dashboard
+                        window.location.href = 'doctor-dashboard.html';
+                     } else {
+                        alert('No doctor found with this wallet address. Please register first.');
+                        window.location.href = 'doctor-registration.html';
+                     }
+                  } catch (error) {
+                     console.error('Error:', error);
+                     alert('An error occurred during login. Please try again.');
+                  }
+               });
+             });
+           
+      </script>
+   </body>
+</html>
