@@ -12,6 +12,7 @@ contract MediConnect is Ownable, ReentrancyGuard {
         string email;
         string phoneNumber;
         string dateOfBirth;
+        string location;
         string medicalHistory;
         bool isRegistered;
         address walletAddress;
@@ -50,6 +51,7 @@ contract MediConnect is Ownable, ReentrancyGuard {
         string memory _email,
         string memory _phoneNumber,
         string memory _dateOfBirth,
+        string memory _location,
         string memory _medicalHistory
     ) external nonReentrant {
         require(!isPatient[msg.sender], "Patient already registered");
@@ -60,6 +62,7 @@ contract MediConnect is Ownable, ReentrancyGuard {
             email: _email,
             phoneNumber: _phoneNumber,
             dateOfBirth: _dateOfBirth,
+            location: _location,
             medicalHistory: _medicalHistory,
             isRegistered: true,
             walletAddress: msg.sender
@@ -106,6 +109,7 @@ contract MediConnect is Ownable, ReentrancyGuard {
         string memory email,
         string memory phoneNumber,
         string memory dateOfBirth,
+        string memory location,
         string memory medicalHistory
     ) {
         require(isPatient[_patientAddress], "Patient not registered");
@@ -115,6 +119,7 @@ contract MediConnect is Ownable, ReentrancyGuard {
             patient.email,
             patient.phoneNumber,
             patient.dateOfBirth,
+            patient.location,
             patient.medicalHistory
         );
     }

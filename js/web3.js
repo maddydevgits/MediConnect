@@ -2,7 +2,7 @@ let web3;
 let contract;
 let accounts;
 
-const contractAddress = '0x00FC4cCC13B04345914C56011bD4Dc98e57468DA'; // Will be updated after deployment
+const contractAddress = '0x6121b2fFAD223D2F9328614Ec8301f08f11Fbe93'; // Will be updated after deployment
 const contractABI = [
     {
       "inputs": [],
@@ -255,6 +255,11 @@ const contractABI = [
         },
         {
           "internalType": "string",
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
           "name": "medicalHistory",
           "type": "string"
         },
@@ -313,6 +318,11 @@ const contractABI = [
         {
           "internalType": "string",
           "name": "_dateOfBirth",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_location",
           "type": "string"
         },
         {
@@ -404,6 +414,11 @@ const contractABI = [
         },
         {
           "internalType": "string",
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
           "name": "medicalHistory",
           "type": "string"
         }
@@ -447,8 +462,7 @@ const contractABI = [
       "type": "function",
       "constant": true
     }
-  ]; // Will be updated after compilation
-
+  ]
 async function initWeb3() {
     if (window.ethereum) {
         try {
