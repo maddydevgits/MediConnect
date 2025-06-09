@@ -544,6 +544,7 @@ async function getPatientInfo(patientAddress) {
             info.email,
             info.phoneNumber,
             info.dateOfBirth,
+            info.location,
             info.medicalHistory
         ];
     } catch (error) {
