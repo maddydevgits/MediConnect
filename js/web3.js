@@ -487,13 +487,14 @@ async function initWeb3() {
     }
 }
 
-async function registerPatient(name, email, phoneNumber, dateOfBirth, medicalHistory) {
+async function registerPatient(name, email, phoneNumber, dateOfBirth, location,medicalHistory) {
     try {
         await contract.methods.registerPatient(
             name,
             email,
             phoneNumber,
             dateOfBirth,
+            location,
             medicalHistory
         ).send({ from: accounts[0] });
         return true;
