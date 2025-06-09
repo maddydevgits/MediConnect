@@ -553,6 +553,12 @@
                 };
                 sessionStorage.setItem('patientInfo', JSON.stringify(updatedInfo));
 
+                // First, update the patient name in the header
+                const patientNameElement = document.getElementById('patientName');
+                if (patientNameElement) {
+                    patientNameElement.textContent = updatedInfo.name;
+                }
+
                 // Restore dashboard content
                 dashboardContent.innerHTML = `
                     <div class="grid">
@@ -561,7 +567,60 @@
                             <div class="card">
                                 <div class="card-header">Patient Information</div>
                                 <div class="card-content">
-                                    <!-- Content will be populated by displayPatientInfo -->
+                                    <div class="wallet-status">
+                                        <i class="fas fa-wallet"></i>
+                                        Connected Wallet: <span id="walletAddress" class="wallet-address">Loading...</span>
+                                    </div>
+
+                                    <div class="profile-center">
+                                        <div class="avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    </div>
+
+                                    <h3 class="patient-name" id="fullNameDisplay"></h3>
+
+                                    <div class="info-list">
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </div>
+                                            <div class="info-content">
+                                                <div class="info-label">Date of Birth</div>
+                                                <div class="info-value" id="dobDisplay"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                            </div>
+                                            <div class="info-content">
+                                                <div class="info-label">Place</div>
+                                                <div class="info-value" id="placeDisplay"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <i class="fas fa-envelope"></i>
+                                            </div>
+                                            <div class="info-content">
+                                                <div class="info-label">Email</div>
+                                                <div class="info-value" id="emailDisplay"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <i class="fas fa-phone"></i>
+                                            </div>
+                                            <div class="info-content">
+                                                <div class="info-label">Phone</div>
+                                                <div class="info-value" id="phoneDisplay"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -578,7 +637,7 @@
                     </div>
                 `;
 
-                // Update UI
+                // Now that the DOM is updated, we can safely call displayPatientInfo
                 displayPatientInfo(updatedInfo);
                 displayMedicalReports(updatedInfo.medicalHistory);
 
@@ -636,13 +695,29 @@
                 return;
             }
 
-            document.getElementById('patientName').textContent = patient.name;
-            document.getElementById('fullNameDisplay').textContent = patient.name;
-            document.getElementById('walletAddress').textContent = 
+            // Get all required elements
+            const elements = {
+                fullNameDisplay: document.getElementById('fullNameDisplay'),
+                walletAddress: document.getElementById('walletAddress'),
+                dobDisplay: document.getElementById('dobDisplay'),
+                emailDisplay: document.getElementById('emailDisplay'),
+                phoneDisplay: document.getElementById('phoneDisplay'),
+                placeDisplay: document.getElementById('placeDisplay')
+            };
+
+            // Check if all elements exist before updating
+            if (!Object.values(elements).every(el => el)) {
+                console.error('Some required elements not found in the DOM');
+                return;
+            }
+
+            // Update elements
+            elements.fullNameDisplay.textContent = patient.name;
+            elements.walletAddress.textContent = 
                 walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
-            document.getElementById('dobDisplay').textContent = patient.dob;
-            document.getElementById('emailDisplay').textContent = patient.email;
-            document.getElementById('phoneDisplay').textContent = patient.phone;
+            elements.dobDisplay.textContent = patient.dob;
+            elements.emailDisplay.textContent = patient.email;
+            elements.phoneDisplay.textContent = patient.phone;
 
             // Extract and display place from medical history
             let place = '';
@@ -660,7 +735,7 @@
                     place = parts[parts.length - 1].trim();
                 }
             }
-            document.getElementById('placeDisplay').textContent = place || 'Not provided';
+            elements.placeDisplay.textContent = place || 'Not provided';
         }
 
         // Display medical reports
