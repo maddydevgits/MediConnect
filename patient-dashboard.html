@@ -718,24 +718,8 @@
             elements.dobDisplay.textContent = patient.dob;
             elements.emailDisplay.textContent = patient.email;
             elements.phoneDisplay.textContent = patient.phone;
+            elements.placeDisplay.textContent = patient.location;
 
-            // Extract and display place from medical history
-            let place = '';
-            try {
-                const parsedHistory = JSON.parse(patient.medicalHistory || '[]');
-                if (typeof parsedHistory === 'string') {
-                    const parts = parsedHistory.split('\n');
-                    if (parts.length > 1) {
-                        place = parts[parts.length - 1].trim();
-                    }
-                }
-            } catch (e) {
-                const parts = (patient.medicalHistory || '').split('\n');
-                if (parts.length > 1) {
-                    place = parts[parts.length - 1].trim();
-                }
-            }
-            elements.placeDisplay.textContent = place || 'Not provided';
         }
 
         // Display medical reports
