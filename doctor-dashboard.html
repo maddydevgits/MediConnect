@@ -874,6 +874,7 @@
                         email: patientInfo[1] || 'Not provided',
                         phone: patientInfo[2] || 'Not provided',
                         dob: patientInfo[3] || 'Not provided',
+                        location: patientInfo[4] || 'Not Provided',
                         medicalHistory: patientInfo[4] || '[]'
                     };
                     
@@ -960,6 +961,7 @@
                 document.getElementById('dobDisplay').textContent = patient.dob;
                 document.getElementById('emailDisplay').textContent = patient.email;
                 document.getElementById('phoneDisplay').textContent = patient.phone;
+                document.getElementById('placeDisplay').textContent = patient.location;
                 
                 // Parse and display medical history
                 let medicalHistory = [];
@@ -995,9 +997,6 @@
                         place = parts[parts.length - 1].trim();
                     }
                 }
-                
-                // Display place in patient info
-                document.getElementById('placeDisplay').textContent = place || 'Not provided';
                 
                 // Display reports
                 displayMedicalReports(medicalHistory);
