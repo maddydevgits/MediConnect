@@ -545,7 +545,7 @@ async function getPatientInfo(patientAddress) {
             info.phoneNumber,
             info.dateOfBirth,
             info.location,
-            info.medicalHistory
+            [info.medicalHistory]
         ];
     } catch (error) {
         console.error("Error getting patient info:", error);
